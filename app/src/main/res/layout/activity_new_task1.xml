@@ -148,9 +148,11 @@
                 <Button
                     android:id="@+id/button1"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:background="#106D94"
+                    android:layout_height="33dp"
+                    android:layout_marginLeft="2dp"
+
                     android:radius="40dp"
                     android:text="Get Date"
                     android:textColor="@color/white" />
@@ -187,7 +189,8 @@
                 <Button
                     android:id="@+id/button"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="33dp"
+
                     android:layout_gravity="center_vertical"
                     android:background="#106D94"
                     android:text="Get Date"
@@ -248,53 +251,111 @@
                     android:id="@+id/btnattach"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:background="@drawable/ic_add_circle_black_24dp"></ImageView>
+                    android:background="@drawable/ic_add_circle_black_24dp"/>
+
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/imgcancel1"
+                        android:layout_width="25dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="-3dp"
+                        android:layout_alignParentTop="true"
+                        android:visibility="gone"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/ic_cancel_black_24dp" />
+
+                    <ImageView
                         android:id="@+id/img1"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:visibility="gone"></ImageView>
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="6dp"
+                        android:visibility="gone" />
+
 
                 </RelativeLayout>
 
+
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:id="@+id/imgcancel2"
+                        android:layout_width="25dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentTop="true"
+                        android:visibility="gone"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="-3dp"
+                        android:background="@drawable/ic_cancel_black_24dp" />
+
 
                     <ImageView
                         android:id="@+id/img2"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:visibility="gone"></ImageView>
+                        android:visibility="gone" />
 
                 </RelativeLayout>
 
+
+
+
+
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:id="@+id/imgcancel3"
+                        android:layout_width="25dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:visibility="gone"
+                        android:layout_marginTop="-3dp"
+                        android:background="@drawable/ic_cancel_black_24dp" />
+
 
                     <ImageView
                         android:id="@+id/img3"
+                        android:adjustViewBounds="true"
+                        android:layout_centerInParent="true"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:visibility="gone"></ImageView>
+                        android:visibility="gone"/>
 
                 </RelativeLayout>
 
+
+
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/vidcancel"
+                        android:layout_width="25dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="-3dp"
+                        android:visibility="gone"
+                        android:background="@drawable/ic_cancel_black_24dp" />
+
+
 
                     <VideoView
                         android:id="@+id/vid1"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:visibility="gone"></VideoView>
+                        android:visibility="gone"/>
 
                 </RelativeLayout>
 

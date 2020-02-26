@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("infab", "you are in fab button");
             }
         });
-        Intent intent = new Intent(this, NewTask.class);
+        Intent intent = new Intent(this, TasksList.class);
         startActivity(intent);
     }
 

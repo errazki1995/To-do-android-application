@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -14,12 +15,20 @@ import java.util.TimerTask;
 
 
 import upem.tasksAnd.start.Adapter.ImageAdapter;
+import upem.tasksAnd.start.models.Task;
 
 public class ViewTask extends AppCompatActivity {
     ViewPager vp;
     TabLayout tbly;
     int currentpic = 0;
     Timer timer;
+    TextView taskname;
+    TextView description;
+    TextView startDate;
+    TextView endDate;
+    TextView difficulty;
+    TextView priority;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,31 @@ public class ViewTask extends AppCompatActivity {
         vp.setAdapter(slider);
         vp.setCurrentItem(0);
         tbly.setupWithViewPager(vp, true);
+        initComponents();
+        populateTheLayout();
     }
+
+
+    void initComponents(){
+        taskname=(TextView) findViewById(R.id.detailtaskname);
+        description = (TextView) findViewById(R.id.detaildesc);
+        startDate=(TextView) findViewById(R.id.detailstartDate);
+        difficulty=(TextView) findViewById(R.id.detaildifficulty);
+        endDate = (TextView)findViewById(R.id.detailendDate);
+        priority = (TextView)findViewById(R.id.detailpriority);
+
+    }
+    public void populateTheLayout(){
+        Task task = (Task) getIntent().getExtras().get("viewTask");
+        taskname.setText(task.getName());
+        description.setText(task.getDescription());
+        startDate.setText(task.getDateStart());
+        endDate.setText(task.getDateEnd());
+        difficulty.setText(task.getDifficulty());
+        priority.setText(task.getPriorityLevel());
+       //remove the viewTask extra
+    }
+
+
 
 }

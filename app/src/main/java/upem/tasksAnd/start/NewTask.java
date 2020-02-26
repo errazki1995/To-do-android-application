@@ -4,13 +4,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.FileUtils;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +31,8 @@ import android.widget.VideoView;
 
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -36,11 +48,13 @@ import java.util.TimeZone;
 import upem.tasksAnd.start.Services.DatabaseHelper;
 import upem.tasksAnd.start.Services.IdAssigner;
 import upem.tasksAnd.start.Services.TaskService;
+import upem.tasksAnd.start.Services.UriManager;
 import upem.tasksAnd.start.models.Attachement;
 import upem.tasksAnd.start.models.Audio;
 import upem.tasksAnd.start.models.Task;
 
 public class NewTask extends AppCompatActivity {
+    int ThenewTaskid=-1;
     TaskService taskService;
     Intent fileintent;
     String haveAparent = null;  //Does this task have a parent  ?
@@ -51,11 +65,19 @@ public class NewTask extends AppCompatActivity {
     ImageView imgcontainer1;
     ImageView imgcontainer2;
     ImageView imgcontainer3;
+
+    //Image Cancel buttons
+    ImageView imgcancel1;
+    ImageView imgcancel2;
+    ImageView imgcancel3;
+
     VideoView videocontainer;
     ArrayAdapter<String> priorAdapter;
     ArrayAdapter<String> difficultyAdapter;
+    List<ImageView> imagesviews;
     Map<String, Integer> toGetPriorityPosition = new HashMap<String, Integer>();
     Map<String, Integer> toGetDifficultyPosition = new HashMap<String, Integer>();
+    Map<Integer,String> attachementImgViewLinker = new HashMap<>();
     List<Attachement> attachements = new ArrayList<>();
     Button addBtn;
     Button btnCancel;
@@ -74,7 +96,8 @@ public class NewTask extends AppCompatActivity {
         populateHashMap();
         initComponents();
         initSpinners();
-        attach();
+        attachListener();
+        imageCancelListener();
         //Toast("The Next ID IS: "+taskService.taskIdGiver(),taskService.duration);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -87,8 +110,7 @@ public class NewTask extends AppCompatActivity {
                 populateTheForm();
             }
         }
-
-        addBtn.setOnClickListener(new View.OnClickListener() {
+     addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -122,6 +144,11 @@ public class NewTask extends AppCompatActivity {
         imgcontainer2 = (ImageView) findViewById(R.id.img2);
         imgcontainer3 = (ImageView) findViewById(R.id.img3);
         videocontainer = (VideoView) findViewById(R.id.vid1);
+
+        imgcancel1 = (ImageView) findViewById(R.id.imgcancel1);
+        imgcancel2 = (ImageView) findViewById(R.id.imgcancel2);
+        imgcancel3 = (ImageView) findViewById(R.id.imgcancel3);
+
 
     }
 
@@ -178,10 +205,18 @@ public class NewTask extends AppCompatActivity {
         Toast("Clicked", taskService.duration);
         String priorSelect = priorlist.getSelectedItem().toString();
         String diffSelect = difflist.getSelectedItem().toString();
+        ThenewTaskid= taskService.taskIdGiver();
 
-        Task t = new Task(taskService.taskIdGiver(), txtTaskname.getText().toString(), txtDescription.getText().toString()
+        Task t = new Task(ThenewTaskid, txtTaskname.getText().toString(), txtDescription.getText().toString()
                 , txtStartDate.getText().toString(), txtEndDate.getText().toString(),
                 priorSelect, diffSelect, 0, null, 0, null);
+
+
+        //link the task id to the attachements
+        for(Attachement a: attachements){
+            a.setTaskid(ThenewTaskid+"");
+            taskService.setupAttachemennt(a);
+        }
 
         Toast(t.toString(), taskService.duration);
         if (haveAparent == null) taskService.addtask(0, t);
@@ -201,7 +236,7 @@ public class NewTask extends AppCompatActivity {
         startActivity(i);
     }
 
-    void attach() {
+    void attachListener() {
         btnattach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,22 +247,45 @@ public class NewTask extends AppCompatActivity {
         });
     }
 
-    void displayAttachement(String path) {
-        String path1 = path.substring(path.lastIndexOf("/") + 1);
-        String filetype = path1.substring(path1.indexOf(".") + 1, path1.length());
-        Log.w("PATHPATH", "the path is :" + path);
-        Log.w("FILEPATH", "the  path1 is :" + path1);
-        Log.w("Filetype", "The file type is " + filetype);
+
+
+    void GetTheAttachement(Uri uri) throws Exception {
+        ContentResolver contentResolver= getApplicationContext().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String type = mime.getExtensionFromMimeType(contentResolver.getType(uri));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                imgcontainer1.setImageDrawable(Drawable.createFromPath(path));
-                imgcontainer1.setVisibility(View.VISIBLE);
+                if(type.equalsIgnoreCase("png") || type.equalsIgnoreCase("jpeg") || type.equalsIgnoreCase("jpg")  ){
+                    if(!HasImage(imgcontainer1)) linkTheImage(imgcontainer1,imgcancel1,uri,type,1);
+                    else if(!HasImage(imgcontainer2)) linkTheImage(imgcontainer2,imgcancel2,uri,type,2);
+                    else if(!HasImage(imgcontainer3)) linkTheImage(imgcontainer3,imgcancel3,uri,type,3);
+                }
             } else {
                 String[] permissionRequest = {Manifest.permission.READ_EXTERNAL_STORAGE};
                 requestPermissions(permissionRequest, 1010);
+
             }
         }
+    }
 
+    private boolean HasImage(ImageView imageVieww){
+        Drawable drawable= imageVieww.getDrawable();
+        boolean imageisthere = drawable !=null;
+        if (imageisthere && (drawable instanceof BitmapDrawable)) {
+            imageisthere = ((BitmapDrawable)drawable).getBitmap() != null;
+        }
+        return imageisthere;
+    }
+    private void linkTheImage(ImageView imgview,ImageView imgcancel,Uri uri,String type,int whichimageview) throws Exception{
+        InputStream is =getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(is);
+        is.close();
+        imgview.setImageBitmap(bitmap);
+        imgview.setVisibility(View.VISIBLE);
+        imgcancel.setVisibility(View.VISIBLE);
+        Attachement a= new Attachement(uri.toString(),type);
+        attachementImgViewLinker.put(whichimageview,a.getGetAttachmentType());
+        attachements.add(a);
     }
 
     //test to validate the form
@@ -242,13 +300,85 @@ public class NewTask extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 10) {
             if (resultCode == RESULT_OK) {
-                String path = data.getData().getPath();
-                displayAttachement(path);
+
+                try {
+                    GetTheAttachement(data.getData());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //String pathFromUri=  uriManager.getUriRealPath(this,data.getData());
+                //Log.d("theXpathfromUri","Xthe path from uri is:"+pathFromUri);
             }
         }
 
     }
 
+    void imageCancelListener(){
+        imgcancel1.setOnClickListener(new View.OnClickListener() {
+            ;
+            @Override
+            public void onClick(View v) {
+                if(attachementImgViewLinker.get(1)!=null){
+                    String uri=attachementImgViewLinker.get(1);
+                    removeAttachement(uri,imgcontainer1,imgcancel1);
+
+                }
+            }
+        });
+
+        imgcancel2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(attachementImgViewLinker.get(2)!=null){
+                    String uri=attachementImgViewLinker.get(2);
+                    removeAttachement(uri,imgcontainer2,imgcancel2);
+                }
+            }
+        });
+
+        imgcancel3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(attachementImgViewLinker.get(3)!=null){
+                    String uri=attachementImgViewLinker.get(3);
+                    removeAttachement(uri,imgcontainer3,imgcancel3);
+
+                }
+            }
+        });
+    }
+
+
+    void removeAttachement(String whichone,ImageView imageView,ImageView cancelImage) {
+        for (Attachement a : attachements) {
+            if (whichone.equalsIgnoreCase(a.getAttachmentPath())) {
+                attachements.remove(a);
+            }
+            imageView.setVisibility(View.GONE);
+            cancelImage.setVisibility(View.GONE);
+        }
+    }
+    /*
+        String getPathFromImageUri(Context context, Uri uri){
+            Cursor cursor = null;
+            try{
+                String[] imgcontent = {MediaStore.Images.Media.DATA};
+                cursor = context.getContentResolver().query(uri,imgcontent,null,null,null);
+                int colind = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                return cursor.getString(colind);
+
+            }catch(Exception e){
+                e.printStackTrace();
+                Log.w("ErrorGetImage","Problem occured getting image path from Uri, line 271 in NewTask.java");
+                return  e.toString();
+            }
+            finally {
+                if(cursor!=null) cursor.close();
+            }
+        }
+
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -256,8 +386,7 @@ public class NewTask extends AppCompatActivity {
             case 1010: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    attach();
-
+                    attachListener();
                 } else {
                     Toast.makeText(this, "We need a permission huh !", Toast.LENGTH_LONG).show();
                 }

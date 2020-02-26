@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import upem.tasksAnd.start.models.Attachement;
 import upem.tasksAnd.start.models.Task;
 import upem.tasksAnd.start.models.TasksTree;
 
@@ -178,5 +179,13 @@ public class TaskService {
     public boolean updateTask(int taskid,Task t){
         return db.updateTask(taskid,t);
     }
+
+    public boolean setupAttachemennt(Attachement attachement){
+        return db.insertAttachement(attachement);
+    }
+
+
+
+
 
 }

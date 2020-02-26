@@ -18,6 +18,10 @@
         <item
             android:id="@+id/itemhuhedit"
             android:title="Edit this task" />
+
+        <item
+            android:id="@+id/itemhuhview"
+            android:title="View more" />
     </menu>
 </item>
 </menu>

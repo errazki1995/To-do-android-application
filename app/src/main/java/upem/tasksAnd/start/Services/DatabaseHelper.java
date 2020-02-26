@@ -66,7 +66,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public final static String Attachement_ID = "attachementid";
     public final static String Attachement_PATH = "attachpath";
     public final static String Attachement_TYPE = "attachtype";
-    public final static String Attachement_FILENAME = "attachfilename";
     public final static String Attachement_TASKID = "taskid";
 
     /*
@@ -112,7 +111,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Create table Attachement(will be autoincremented)
         db.execSQL("create table " + TABLE_NAME_Attachement + " (" + Attachement_ID + primary_key + autoincrement + delimiter + Attachement_PATH + text + delimiter
-                + Attachement_TYPE + text + delimiter + Attachement_FILENAME + text + delimiter + Attachement_TASKID + integer + ")");
+                + Attachement_TYPE + text + delimiter  + Attachement_TASKID + integer + ")");
         //Create table Geolocalisation (will be autoincremented)
 
     }
@@ -157,9 +156,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean deleteTask(int taskid) {
         SQLiteDatabase db = this.getWritableDatabase();
-       return db.delete(TABLE_NAME_Task,Task_ID+"=?",new String[]{Integer.toString(taskid)})>0;
-      //  db.execSQL("DELETE FROM " + TABLE_NAME_Task + " WHERE " + Task_ID + "=" + taskid);
-       // db.close();
+        return db.delete(TABLE_NAME_Task,Task_ID+"=?",new String[]{Integer.toString(taskid)})>0;
+        //  db.execSQL("DELETE FROM " + TABLE_NAME_Task + " WHERE " + Task_ID + "=" + taskid);
+        // db.close();
     }
 
     public List<Category> getAllCategories() {
@@ -316,8 +315,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*
     Attachement Section
      */
-    public boolean insertAttachement(int taskid, Attachement a) {
-        return true;
+    public boolean insertAttachement(Attachement a) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues= new ContentValues();
+        contentValues.put(Attachement_PATH,a.getAttachmentPath());
+        contentValues.put(Attachement_TYPE,a.getGetAttachmentType());
+        contentValues.put(Attachement_TASKID,a.getTaskid());
+        return db.insert(TABLE_NAME_Attachement,null,contentValues)>0;
     }
 
     /*

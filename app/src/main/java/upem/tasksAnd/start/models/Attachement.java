@@ -2,11 +2,17 @@ package upem.tasksAnd.start.models;
 
 public class Attachement {
 //atachement id equals task id or subtask-id
+
 private int attachementid;
 private String attachmentPath;
-private String getAttachmentType;
-private String fileName;
+private String attachmentType;
+private String taskid;
 
+public Attachement(String attachmentPath,String attachType){
+    this.attachmentPath=attachmentPath;
+    this.attachmentType= attachType;
+    this.taskid = taskid;
+}
     public int getAttachementid() {
         return attachementid;
     }
@@ -24,18 +30,18 @@ private String fileName;
     }
 
     public String getGetAttachmentType() {
-        return getAttachmentType;
+        return attachmentType;
     }
 
     public void setGetAttachmentType(String getAttachmentType) {
-        this.getAttachmentType = getAttachmentType;
+        this.attachmentType = getAttachmentType;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getTaskid() {
+        return taskid;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setTaskid(String taskid) {
+        this.taskid = taskid;
     }
 }

@@ -31,6 +31,7 @@ import upem.tasksAnd.start.R;
 import upem.tasksAnd.start.Services.Display;
 import upem.tasksAnd.start.Services.TaskService;
 import upem.tasksAnd.start.TasksList;
+import upem.tasksAnd.start.ViewTask;
 import upem.tasksAnd.start.models.Task;
 
 public class Adapter extends BaseAdapter implements AdapterView.OnItemClickListener {
@@ -188,6 +189,8 @@ STUCK HERE , OBJECT IS NOT WRAPPED INSIDE THE EXTRA
                     case R.id.itemhuhedit:
                         editItemContent(activity, position);
                         break;
+                    case R.id.itemhuhview:
+                        viewItemContent(activity,position);
                     default:
                         break;
 
@@ -225,6 +228,12 @@ STUCK HERE , OBJECT IS NOT WRAPPED INSIDE THE EXTRA
         else Toast.makeText(activity.getApplicationContext(), "Failed to delete the task", Toast.LENGTH_LONG).show();
         Intent i = new Intent(activity.getApplicationContext(),TasksList.class);
         activity.startActivity(i);
+    }
+
+    private void viewItemContent(final Activity activity, int position) {
+        Intent intent = new Intent(activity.getApplicationContext(), ViewTask.class);
+        intent.putExtra("viewTask", getItem(position));
+        context.startActivity(intent);
     }
 
 }
