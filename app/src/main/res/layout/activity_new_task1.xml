@@ -12,8 +12,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="198dp"
+        android:visibility="visible"
         android:background="@color/colorPrimaryDark"
         android:orientation="vertical">
+
 
         <TextView
             android:id="@+id/titlepage"
@@ -42,10 +44,36 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="-110dp"
         android:layout_marginRight="16dp"
+        android:visibility="visible"
         android:background="@drawable/bgitemdoes"
         android:orientation="vertical"
         android:paddingTop="22dp"
         android:paddingBottom="22dp">
+
+
+        <DatePicker
+            android:id="@+id/startDatepicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="-30dp"
+            android:layout_marginRight="-30dp"
+            />
+
+        <DatePicker
+            android:id="@+id/endDatepicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:layout_marginStart="1dp"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,6 +84,7 @@
 
             <TextView
                 android:id="@+id/addtitle"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add Title"
@@ -65,6 +94,7 @@
 
             <EditText
                 android:id="@+id/txtTaskName"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:background="@drawable/bginputtask"
@@ -82,11 +112,13 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="20dp"
+            android:visibility="visible"
             android:layout_marginRight="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/adddesc"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Description"
@@ -97,6 +129,7 @@
 
             <EditText
                 android:id="@+id/txtTaskDescription"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:background="@drawable/bginputtask"
@@ -119,6 +152,7 @@
 
             <TextView
                 android:id="@+id/adddate"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Start time"
@@ -133,6 +167,7 @@
 
                 <EditText
                     android:id="@+id/txtstartDate"
+                    android:visibility="visible"
                     android:layout_width="271dp"
                     android:layout_height="36dp"
                     android:layout_gravity="center_vertical"
@@ -146,7 +181,8 @@
                     android:textColorHint="#B5B5B5" />
 
                 <Button
-                    android:id="@+id/button1"
+                    android:id="@+id/showstartPicker"
+                    android:visibility="visible"
                     android:layout_width="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="#106D94"
@@ -162,6 +198,7 @@
             -->
             <TextView
                 android:id="@+id/starttime"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="End time"
@@ -176,6 +213,7 @@
 
                 <EditText
                     android:id="@+id/txtEndDate"
+                    android:visibility="visible"
                     android:layout_width="271dp"
                     android:layout_height="36dp"
                     android:layout_gravity="center_vertical"
@@ -187,7 +225,8 @@
                     android:textColorHint="#B5B5B5" />
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/showEndPicker"
+                    android:visibility="visible"
                     android:layout_width="wrap_content"
                     android:layout_height="33dp"
 
@@ -204,6 +243,7 @@
 
                 <TextView
                     android:id="@+id/prio"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Priority"
@@ -213,12 +253,14 @@
 
                 <Spinner
                     android:id="@+id/priorityList"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
                     app:layout_constraintHorizontal_bias="0.385" />
 
                 <TextView
                     android:id="@+id/diff"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Difficulty"
@@ -228,12 +270,15 @@
 
                 <Spinner
                     android:id="@+id/difficultyList"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
 
                     app:layout_constraintHorizontal_bias="1.0" />
 
                 <TextView
+                    android:id="@+id/lblwarn"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
                     android:text="Warning message comes here"
@@ -249,6 +294,7 @@
 
                 <ImageView
                     android:id="@+id/btnattach"
+                    android:visibility="visible"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:background="@drawable/ic_add_circle_black_24dp"/>
@@ -274,7 +320,6 @@
                         android:layout_height="50dp"
                         android:layout_marginTop="6dp"
                         android:visibility="gone" />
-
 
                 </RelativeLayout>
 

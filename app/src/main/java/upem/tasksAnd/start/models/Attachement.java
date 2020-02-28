@@ -11,8 +11,12 @@ private String taskid;
 public Attachement(String attachmentPath,String attachType){
     this.attachmentPath=attachmentPath;
     this.attachmentType= attachType;
-    this.taskid = taskid;
 }
+    public Attachement(String taskid,String attachmentPath,String attachType){
+        this.attachmentPath=attachmentPath;
+        this.attachmentType= attachType;
+        this.taskid = taskid;
+    }
     public int getAttachementid() {
         return attachementid;
     }

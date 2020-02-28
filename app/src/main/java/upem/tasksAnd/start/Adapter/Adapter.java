@@ -70,7 +70,6 @@ public class Adapter extends BaseAdapter implements AdapterView.OnItemClickListe
         ImageButton btnEditSubtask;
         ImageButton btnListSubtasks;
         ImageView imageViewmore;
-
     }
 
     @Override
@@ -98,10 +97,11 @@ public class Adapter extends BaseAdapter implements AdapterView.OnItemClickListe
         ViewHolder viewHolder = new ViewHolder();
         itemview = (itemview == null) ? layoutInflater.inflate(R.layout.taskitem1, null) : itemview;
         viewHolder.txtname = (TextView) itemview.findViewById(R.id.lbltaskName);
-        viewHolder.txtdescription = (TextView) itemview.findViewById(R.id.lbltaskDescription);
         viewHolder.txtstatus = (TextView) itemview.findViewById(R.id.lblstatus);
         viewHolder.txtTaskNumber = (TextView) itemview.findViewById(R.id.lbltasknumber);
         viewHolder.btnNewSubtask = (ImageButton) itemview.findViewById(R.id.btnNewsubtask);
+        viewHolder.txtdescription = (TextView) itemview.findViewById(R.id.lbltaskDescription);
+
         viewHolder.btnEditSubtask = (ImageButton) itemview.findViewById(R.id.btnEditsubtask);
         viewHolder.btnListSubtasks = (ImageButton) itemview.findViewById(R.id.btnListsubtasks);
         viewHolder.imageViewmore = (ImageView) itemview.findViewById(R.id.imgviewMore);
@@ -174,8 +174,6 @@ STUCK HERE , OBJECT IS NOT WRAPPED INSIDE THE EXTRA
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Display.Toast(activity.getApplicationContext(), "Item n" + item.getItemId() + " is clicked", 0);
-                Log.w("menudebug", "item.getItemId() :" + item.getItemId());
                 switch (item.getItemId()) {
                     case R.id.itemhuhadd:
                         addItemContent(activity, position);

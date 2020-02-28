@@ -169,7 +169,7 @@ public class TaskService {
     }
 
     public boolean deleteTask(int taskid) {
-       return db.deleteTask(taskid);
+        return db.deleteTask(taskid);
 
     }
 
@@ -184,8 +184,8 @@ public class TaskService {
         return db.insertAttachement(attachement);
     }
 
-
-
-
+    public List<Attachement> getTaskAttachement(int taskid){
+        return db.listAttachement(taskid);
+    }
 
 }

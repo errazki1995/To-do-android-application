@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,9 +25,11 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -53,7 +57,7 @@ import upem.tasksAnd.start.models.Attachement;
 import upem.tasksAnd.start.models.Audio;
 import upem.tasksAnd.start.models.Task;
 
-public class NewTask extends AppCompatActivity {
+public class NewTask extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
     int ThenewTaskid=-1;
     TaskService taskService;
     Intent fileintent;
@@ -81,6 +85,10 @@ public class NewTask extends AppCompatActivity {
     List<Attachement> attachements = new ArrayList<>();
     Button addBtn;
     Button btnCancel;
+
+    Button btndatestart;
+    Button btndateend;
+
     EditText txtTaskname;
     EditText txtDescription;
     EditText txtStartDate;
@@ -88,6 +96,8 @@ public class NewTask extends AppCompatActivity {
     List<String> spinnerPriority = new ArrayList<String>();
     List<String> spinnerDifficulty = new ArrayList<String>();
 
+    int yearstart, monthstart, daystart,yearend, monthend, dayend; //initialize them to current date in onStart()/onCreate()
+    DatePickerDialog.OnDateSetListener startDateListener,endDateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +140,8 @@ public class NewTask extends AppCompatActivity {
 
             }
         });
+        showDateSTARTpickerStartListener();
+
     }
 
     void initComponents() {
@@ -148,6 +160,9 @@ public class NewTask extends AppCompatActivity {
         imgcancel1 = (ImageView) findViewById(R.id.imgcancel1);
         imgcancel2 = (ImageView) findViewById(R.id.imgcancel2);
         imgcancel3 = (ImageView) findViewById(R.id.imgcancel3);
+
+        btndatestart=(Button) findViewById(R.id.showstartPicker);
+        btndateend=(Button) findViewById(R.id.showEndPicker);
 
 
     }
@@ -276,6 +291,10 @@ public class NewTask extends AppCompatActivity {
         }
         return imageisthere;
     }
+
+    void HideItems() {
+
+    }
     private void linkTheImage(ImageView imgview,ImageView imgcancel,Uri uri,String type,int whichimageview) throws Exception{
         InputStream is =getContentResolver().openInputStream(uri);
         Bitmap bitmap = BitmapFactory.decodeStream(is);
@@ -358,6 +377,7 @@ public class NewTask extends AppCompatActivity {
             cancelImage.setVisibility(View.GONE);
         }
     }
+
     /*
         String getPathFromImageUri(Context context, Uri uri){
             Cursor cursor = null;
@@ -395,6 +415,34 @@ public class NewTask extends AppCompatActivity {
         }
     }
 
+
+    public void showDateSTARTpickerStartListener(){
+        btndatestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+
+            }
+        });
+    }
+
+    void showDatePickerDialog(){
+        Log.d("showdate","you are inside picker");
+        DatePickerDialog datePickerDialog= new DatePickerDialog(this,
+                this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+           );
+        datePickerDialog.show();
+        Log.d("show1","you are inside picker AFTER");
+
+    }
+
+
+//https://stackoverflow.com/questions/3734981/multiple-datepickers-in-same-activity
+
+
     public void Toast(String message, int duration) {
         taskService.Toast(message, duration);
     }
@@ -406,6 +454,19 @@ public class NewTask extends AppCompatActivity {
         return today;
     }
 
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        month=month+1;
+        String date = formatDateOnPicker(dayOfMonth,month,year);
+        txtStartDate.setText(date);
+    }
+
+
+    String formatDateOnPicker(int dayofmonth,int month,int year){
+        String day = (dayofmonth<10)?"0"+dayofmonth:dayofmonth+"";
+        String monthok=(month<10)?"0"+month:month+"";
+        return day+"/"+monthok+"/"+year;
+    }
 }
 /*
 BESIDE THE DESTROYING OF THE INTENT INSIDE THE ONCREATE IT SHOULD BE DESTROYED WHEN THERE IS ANY MIUSE OF

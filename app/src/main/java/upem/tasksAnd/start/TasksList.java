@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,8 @@ public class TasksList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //verify which layer you are in with the id
-              //  Intent i = new Intent(getApplicationContext(), NewTask.class);
-                //startActivity(i);
+                Intent i = new Intent(getApplicationContext(), NewTask.class);
+                startActivity(i);
 
             }
         });
@@ -62,14 +63,11 @@ public class TasksList extends AppCompatActivity {
             taskservice = new TaskService(this);
             listviewTasks = (ListView) findViewById(R.id.tasklistview);
             Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                haveAparent = bundle.getString("parentidL");
-            }
-            taskservice.Toast("The redirected parent is :" + haveAparent + " ", taskservice.duration);
-
+            if (bundle != null) haveAparent = bundle.getString("parentidL");
             if (haveAparent != null)
                 tasks = taskservice.listAllTasks(Integer.parseInt(haveAparent));
             else tasks = taskservice.listAllTasks(0);
+
             adapter = new Adapter(this, tasks);
             listviewTasks.setAdapter(adapter);
         } catch (Exception e) {

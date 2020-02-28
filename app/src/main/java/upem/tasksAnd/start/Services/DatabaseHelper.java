@@ -194,11 +194,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int parentId = result.getInt(result.getColumnIndex(Task_PARENTID));
                 Task t = new Task(taskid, name, description, dateStart, dateEnd, priority, difficulty, status, null, parentId, null);
                 tasks.add(t);
-
             } while (result.moveToNext());
         }
         result.close();
         return tasks;
+    }
+
+    public List<Attachement> listAttachement(int taskid){
+
+        List<Attachement> attachements=new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cr = db.rawQuery("select * from "+TABLE_NAME_Attachement+" where "+Attachement_TASKID+"="+taskid,null);
+        if(cr.moveToFirst()){
+            do{
+                String attachType = cr.getString(cr.getColumnIndex(Attachement_TYPE));
+                String attachPath = cr.getString(cr.getColumnIndex(Attachement_TYPE));
+                String attachTask= cr.getString(cr.getColumnIndex(Attachement_TASKID));
+                Attachement a= new Attachement(attachTask,attachPath,attachType);
+                attachements.add(a);
+
+            }while(cr.moveToNext());
+        }
+        cr.close();
+        return attachements;
     }
 
     public boolean updateTask(int taskid, Task t) {
@@ -214,8 +232,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(Task_STATUS, t.getStatus());
         contentValues.put(Task_PARENTID, t.getParentid());
         long ok = db.update(TABLE_NAME_Task, contentValues, Task_ID + "=" + taskid, null);
-
-        Log.w("update", "you are in update ok false or true ! ->" + ok);
         if (ok == -1) return false;
         else return true;
     }
@@ -247,14 +263,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.getIconName() == null) contentValues.put(categoryiconName, 0);
         else contentValues.put(categoryiconName, c.getIconName());
         long ok = db.insert(TABLE_NAME_Category, null, contentValues);
-        Log.w("cat", "the category is:" + c.toString());
         if (ok == -1) return false;
         else return true;
 
     }
 
     public boolean updateCategory(int category_id, Category c) {
-        //update the category name
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(categoryname, c.getCategoryName());
@@ -285,7 +299,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     */
 
-    public boolean updateTaskCategory(int categoryid, Task t) {
+    public boolean moveTaskTocategory(int categoryid, Task t) {
         //update the task category to another category...
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -312,6 +326,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return 0;
     } //not done yet
 
+
     /*
     Attachement Section
      */
@@ -324,12 +339,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_NAME_Attachement,null,contentValues)>0;
     }
 
-    /*
-    Geolocalisation Section
-     */
-    public boolean insertGeolocalisation(Geolocalisation g) {
-        return true;
-    }
+
 
     /*
     Timer section
@@ -377,7 +387,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_NAME_Timer + " WHERE " + timerid + "=" + id);
         db.close();
-
     }
 
 

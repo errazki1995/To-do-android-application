@@ -138,6 +138,7 @@ public class Task implements Serializable {
                 ", dateStart=" + dateStart +
                 ", dateEnd=" + dateEnd +
                 ", priorityLevel='" + priorityLevel + '\'' +
+                "description: "+description+
                 ", difficulty='" + difficulty + '\'' +
                 ", status=" + status +
                 ", attachement=" + attachement +
