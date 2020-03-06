@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         Catservice = new CategoryService(getApplicationContext());
-        Catservice.newCategory();
+     //   Catservice.newCategory();
         addTodoListInNavView();
 
         fab.setOnClickListener(new View.OnClickListener() {

@@ -93,8 +93,8 @@ public class TasksList extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
       //  NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        Catservice = new CategoryService(getApplicationContext());
-        Catservice.newCategory();
+       // Catservice = new CategoryService(getApplicationContext());
+     //   Catservice.newCategory();
         addTodoListInNavView();
 
         fab.setOnClickListener(new View.OnClickListener() {

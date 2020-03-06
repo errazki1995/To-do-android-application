@@ -127,14 +127,16 @@ public class ImageAdapter extends PagerAdapter {
         View imageLayout = outflat.inflate(R.layout.img_layout, view, false);
         final ImageView imageView = (ImageView) imageLayout
                 .findViewById(R.id.imgok);
-       // imageView.setImageResource(images.get(position));
         try{
             InputStream is =context.getContentResolver().openInputStream(Uri.parse(images.get(position).toString()));
           if(is==null) Log.d("inputstream","input is not null");
           else  Log.d("inputstream1","input is  null");
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             is.close();
+
             imageView.setImageBitmap(bitmap);
+
+
         }
         catch (Exception e){e.printStackTrace();}
 

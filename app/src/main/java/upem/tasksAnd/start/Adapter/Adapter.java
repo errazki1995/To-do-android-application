@@ -3,6 +3,8 @@ package upem.tasksAnd.start.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,14 +20,21 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.zip.Inflater;
 
+import upem.tasksAnd.start.CategoriesActivity;
 import upem.tasksAnd.start.NewTask;
 import upem.tasksAnd.start.R;
 import upem.tasksAnd.start.Services.Display;
@@ -37,6 +46,11 @@ import upem.tasksAnd.start.models.Task;
 public class Adapter extends BaseAdapter implements AdapterView.OnItemClickListener {
     List<Task> tasks;
     Context context;
+    TextView dateEnd;
+    TextView txtname;
+    TextView txtdescription;
+
+
     TaskService taskService;
     static LayoutInflater layoutInflater = null;
 
@@ -62,14 +76,13 @@ public class Adapter extends BaseAdapter implements AdapterView.OnItemClickListe
     }
 
     public class ViewHolder {
-        TextView txtname;
-        TextView txtdescription;
         TextView txtstatus;
         TextView txtTaskNumber;
         ImageButton btnNewSubtask;
         ImageButton btnEditSubtask;
         ImageButton btnListSubtasks;
         ImageView imageViewmore;
+
     }
 
     @Override
@@ -96,18 +109,19 @@ public class Adapter extends BaseAdapter implements AdapterView.OnItemClickListe
         View itemview = v;
         ViewHolder viewHolder = new ViewHolder();
         itemview = (itemview == null) ? layoutInflater.inflate(R.layout.taskitem1, null) : itemview;
-        viewHolder.txtname = (TextView) itemview.findViewById(R.id.lbltaskName);
+       txtname = (TextView) itemview.findViewById(R.id.lbltaskName);
         viewHolder.txtstatus = (TextView) itemview.findViewById(R.id.lblstatus);
         viewHolder.txtTaskNumber = (TextView) itemview.findViewById(R.id.lbltasknumber);
         viewHolder.btnNewSubtask = (ImageButton) itemview.findViewById(R.id.btnNewsubtask);
-        viewHolder.txtdescription = (TextView) itemview.findViewById(R.id.lbltaskDescription);
-
+        txtdescription = (TextView) itemview.findViewById(R.id.lbltaskDescription);
+        dateEnd = (TextView) itemview.findViewById(R.id.datedoes);
         viewHolder.btnEditSubtask = (ImageButton) itemview.findViewById(R.id.btnEditsubtask);
         viewHolder.btnListSubtasks = (ImageButton) itemview.findViewById(R.id.btnListsubtasks);
         viewHolder.imageViewmore = (ImageView) itemview.findViewById(R.id.imgviewMore);
         Task t = getItem(position);
-        viewHolder.txtname.setText(t.getName());
-        viewHolder.txtdescription.setText(t.getDescription());
+        txtname.setText(t.getName());
+        txtdescription.setText(t.getDescription());
+        dateEnd.setText(dateCalculator(t));
         viewHolder.imageViewmore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +202,9 @@ STUCK HERE , OBJECT IS NOT WRAPPED INSIDE THE EXTRA
                         editItemContent(activity, position);
                         break;
                     case R.id.itemhuhview:
-                        viewItemContent(activity,position);
+                        viewItemContent(activity, position);
+                    case R.id.itemhuhmovetolist:
+                        movetoAnotherItemContent(activity, position);
                     default:
                         break;
 
@@ -222,9 +238,11 @@ STUCK HERE , OBJECT IS NOT WRAPPED INSIDE THE EXTRA
     private void deleteItemContent(final Activity activity, int position) {
         Task t = getItem(position);
         String taskname = t.getName();
-        if(taskService.deleteTask(t.getTaskid())) Toast.makeText(activity.getApplicationContext(), "The task " + taskname + " has been successfuly deleted !", Toast.LENGTH_LONG).show();
-        else Toast.makeText(activity.getApplicationContext(), "Failed to delete the task", Toast.LENGTH_LONG).show();
-        Intent i = new Intent(activity.getApplicationContext(),TasksList.class);
+        if (taskService.deleteTask(t.getTaskid()))
+            Toast.makeText(activity.getApplicationContext(), "The task " + taskname + " has been successfuly deleted !", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(activity.getApplicationContext(), "Failed to delete the task", Toast.LENGTH_LONG).show();
+        Intent i = new Intent(activity.getApplicationContext(), TasksList.class);
         activity.startActivity(i);
     }
 
@@ -232,6 +250,62 @@ STUCK HERE , OBJECT IS NOT WRAPPED INSIDE THE EXTRA
         Intent intent = new Intent(activity.getApplicationContext(), ViewTask.class);
         intent.putExtra("viewTask", getItem(position));
         context.startActivity(intent);
+    }
+
+    private void movetoAnotherItemContent(final Activity activity, int position) {
+
+        Intent intent = new Intent(activity.getApplicationContext(), CategoriesActivity.class);
+        intent.putExtra("theTaskCategory", getItem(position));
+        context.startActivity(intent);
+
+
+
+    }
+
+    private String dateCalculator(Task t) {
+        long diff = getActualDate().getTime()-convertToDate(t.getDateEnd()).getTime();
+        String dateMessage="";
+        int daysbetween =(int) (diff/(1000*60*60*24));
+        Log.d("dateOkcalc","the days between for task"+t.getName()+" are :"+daysbetween+" days");
+        if(daysbetween==0){
+            statusDateColor("#eb8676");
+            dateMessage="Today";
+        }
+        else if(daysbetween==1) {
+            statusDateColor("#e9df0b");
+            dateMessage= "Tomorrow";
+        }
+        else if(daysbetween>1) {
+            statusDateColor("#39b7e7");
+            dateMessage ="In "+daysbetween+" days" ;
+        }
+        else {
+            statusDateColor("#ff002b");
+            strikeTask();
+            dateMessage="Expired";
+        }
+    return dateMessage;
+    }
+    void statusDateColor(String color){
+        dateEnd.setTextColor(Color.parseColor(color));    }
+
+    Date convertToDate(String date){
+        try {
+            SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
+            Date date1 = formater.parse(date);
+            return date1;
+        }catch (Exception e){e.printStackTrace();return null;}
+   }
+   void strikeTask(){
+       txtname.setPaintFlags(txtname.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+       txtdescription.setPaintFlags(txtdescription.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+   }
+    public Date getActualDate() {
+        SimpleDateFormat df = new SimpleDateFormat("dd/MMM/yyyy");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date today = Calendar.getInstance().getTime();
+        return today;
     }
 
 }

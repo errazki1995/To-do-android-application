@@ -25,17 +25,22 @@ import java.util.List;
 import upem.tasksAnd.start.Adapter.CatAdapter;
 import upem.tasksAnd.start.Services.CategoryService;
 import upem.tasksAnd.start.models.Category;
+import upem.tasksAnd.start.models.Task;
 
 public class CategoriesActivity extends AppCompatActivity {
 
     ListView catlistview;
+
     TextView txtcategory;
     TextView lblResult;
+    TextView lblcategory;
     ImageView btncategory;
+    Button btnmove;
+    TextView mentionMove;
     CategoryService categoryService;
     List<Category> categories;
     CatAdapter catadapter;
-
+    Task whichtask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,28 +49,42 @@ public class CategoriesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         initComponents();
         newCategoryListener();
     }
 
     void initComponents() {
+
         catlistview = (ListView) findViewById(R.id.catlistView);
         txtcategory = (TextView) findViewById(R.id.txtcategory);
         lblResult = (TextView) findViewById(R.id.lblresult);
+        lblcategory=(TextView) findViewById(R.id.lblcategory);
         btncategory = (ImageView) findViewById(R.id.btncat);
+        mentionMove=(TextView) findViewById(R.id.mentionMove);
+        btnmove=(Button) findViewById(R.id.movehere);
         categoryService = new CategoryService(getApplicationContext());
         categories = new ArrayList<>();
         categories = categoryService.getAllCategories();
         //Log.d("catcount","the category count"+ categories.size());
         catadapter = new CatAdapter(this, categories);
         catlistview.setAdapter(catadapter);
+        Task task=null;
+        if(getTaskIncaseOfMove()!=null)
+            task = getTaskIncaseOfMove();
+
+        if(task!=null){
+            mentionMove.setVisibility(View.VISIBLE);
+            lblcategory.setVisibility(View.GONE);
+            txtcategory.setVisibility(View.GONE);
+            btncategory.setVisibility(View.GONE);
+        }else{
+            mentionMove.setVisibility(View.GONE);
+            lblcategory.setVisibility(View.VISIBLE);
+            txtcategory.setVisibility(View.VISIBLE);
+            btncategory.setVisibility(View.VISIBLE);
+        }
+
     }
 
     void newCategoryListener() {
@@ -85,6 +104,14 @@ public class CategoriesActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    Task getTaskIncaseOfMove(){
+        Bundle bundle= getIntent().getExtras();
+        if(bundle!=null){
+            whichtask = (upem.tasksAnd.start.models.Task) getIntent().getExtras().get("theTaskCategory");
+        }
+        return whichtask;
     }
 
 }

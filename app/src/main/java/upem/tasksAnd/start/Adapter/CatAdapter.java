@@ -1,8 +1,11 @@
 package upem.tasksAnd.start.Adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -10,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -23,6 +27,7 @@ import upem.tasksAnd.start.R;
 import upem.tasksAnd.start.Services.CategoryService;
 import upem.tasksAnd.start.Services.Display;
 import upem.tasksAnd.start.models.Category;
+import upem.tasksAnd.start.models.Task;
 
 public class CatAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
     List<Category> categories;
@@ -53,6 +58,7 @@ public class CatAdapter extends BaseAdapter implements AdapterView.OnItemClickLi
 
     public class ViewHolder {
         TextView catName;
+        Button movebtn;
         ImageView imgmorecat;
 
     }
@@ -83,6 +89,7 @@ public class CatAdapter extends BaseAdapter implements AdapterView.OnItemClickLi
         itemview = (itemview == null) ? layoutInflater.inflate(R.layout.category_item, null) : itemview;
         viewHolder.catName = (TextView) itemview.findViewById(R.id.catName);
         viewHolder.imgmorecat = (ImageView) itemview.findViewById(R.id.morecat);
+        viewHolder.movebtn = (Button) itemview.findViewById(R.id.movehere);
         Category c = getItem(position);
 
         viewHolder.catName.setText(c.getCategoryName());
@@ -92,8 +99,24 @@ public class CatAdapter extends BaseAdapter implements AdapterView.OnItemClickLi
                 showPopMenu((Activity) context, v, position);
             }
         });
+        final Task task = getTaskIncaseOfMove();
+        if(task!=null){
+            viewHolder.movebtn.setVisibility(View.VISIBLE);
+            viewHolder.imgmorecat.setVisibility(View.GONE);
+            viewHolder.movebtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CategoryService service = new CategoryService(context);
+                    Log.d("OKTEST","You are inside the onclick:"+getItem(position).getCategoryName());
+                    Category category = getItem(position);
+                    if(service.moveTasktoList(category.getCategoryid(),task))
+                        confirmpanel("Task Moved","Task '"+task.getName()+"' successfully moved to list "+getItem(position).getCategoryName());
+                    else confirmpanel("Error moving task","Failure moving your task to list "+category.getCategoryName());
 
-
+                }
+            });
+        }
+        else viewHolder.movebtn.setVisibility(View.GONE);
         return itemview;
     }
 
@@ -104,14 +127,11 @@ public class CatAdapter extends BaseAdapter implements AdapterView.OnItemClickLi
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Display.Toast(activity.getApplicationContext(), "Item n" + item.getItemId() + " is clicked", 0);
-                Log.w("menudebug", "item.getItemId() :" + item.getItemId());
                 switch (item.getItemId()) {
                     case R.id.catdelete:
                         deleteCategory(activity, position);
                         break;
                     case R.id.catedit:
-                        editItemContent(activity, position);
                         break;
 
                     default:
@@ -137,8 +157,30 @@ public class CatAdapter extends BaseAdapter implements AdapterView.OnItemClickLi
         String category = c.getCategoryName();
         if(categoryService.deleteCategory(c.getCategoryid())) Toast.makeText(activity.getApplicationContext(), "The category" + category + " has been successfuly deleted !", Toast.LENGTH_LONG).show();
         else Toast.makeText(activity.getApplicationContext(), "Failed to delete the Category", Toast.LENGTH_LONG).show();
-       Intent i = new Intent(activity.getApplicationContext(), CategoriesActivity.class);
-       activity.startActivity(i);
+        Intent i = new Intent(activity.getApplicationContext(), CategoriesActivity.class);
+        activity.startActivity(i);
+    }
+
+    Task getTaskIncaseOfMove(){
+        Intent intent = ((Activity) context).getIntent();
+        Bundle bundle= intent.getExtras();
+        Task task=null;
+        if(bundle!=null) task = (Task) bundle.get("theTaskCategory");
+        return task;
+    }
+    void confirmpanel(String title,String message){
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message).setNegativeButton(android.R.string.no,null)
+                .setIcon(android.R.drawable.ic_dialog_alert).setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent intent = ((Activity) context).getIntent();
+                intent.removeExtra("theTaskCategory");
+                Intent i =new Intent(context.getApplicationContext(),CategoriesActivity.class);
+                context.startActivity(i);
+            }
+        }).show();
     }
 
 

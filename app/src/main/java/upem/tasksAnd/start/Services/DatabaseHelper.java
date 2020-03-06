@@ -180,7 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Task> getAllTasksByParent(int parentid) {
         SQLiteDatabase db = this.getWritableDatabase();
         List<Task> tasks = new ArrayList<>();
-        Cursor result = db.rawQuery("select * from " + TABLE_NAME_Task + " where parentid=" + parentid, null);
+        Cursor result = db.rawQuery("select * from " + TABLE_NAME_Task + " where parentid=" + parentid+" order by "+Task_DATEEND+" desc", null);
         if (result.moveToFirst()) {
             do {
                 int taskid = result.getInt(result.getColumnIndex(Task_ID));

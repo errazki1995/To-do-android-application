@@ -58,6 +58,7 @@ import upem.tasksAnd.start.models.Audio;
 import upem.tasksAnd.start.models.Task;
 
 public class NewTask extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+    int startOrEndDatePicker=0; //Tricky method since i can't put 2 onDateSets listener (have 2 Datepicker in the same activity) 1 for startDate and 2 for end date
     int ThenewTaskid=-1;
     TaskService taskService;
     Intent fileintent;
@@ -415,17 +416,6 @@ public class NewTask extends AppCompatActivity implements DatePickerDialog.OnDat
         }
     }
 
-
-    public void showDateSTARTpickerStartListener(){
-        btndatestart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-
-            }
-        });
-    }
-
     void showDatePickerDialog(){
         Log.d("showdate","you are inside picker");
         DatePickerDialog datePickerDialog= new DatePickerDialog(this,
@@ -439,26 +429,42 @@ public class NewTask extends AppCompatActivity implements DatePickerDialog.OnDat
 
     }
 
+    public void showDateSTARTpickerStartListener(){
 
-//https://stackoverflow.com/questions/3734981/multiple-datepickers-in-same-activity
+        btndatestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startOrEndDatePicker=1;
+                showDatePickerDialog();
+
+            }
+        });
+        btndateend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startOrEndDatePicker=2;
+                showDatePickerDialog();
+
+            }
+        });
+    }
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+     if(startOrEndDatePicker==1){
+         month=month+1;
+         String date = formatDateOnPicker(dayOfMonth,month,year);
+         txtStartDate.setText(date);
+     }
+     else if(startOrEndDatePicker==2){
+         month=month+1;
+         String date = formatDateOnPicker(dayOfMonth,month,year);
+         txtEndDate.setText(date);
+     }
+    }
 
 
     public void Toast(String message, int duration) {
         taskService.Toast(message, duration);
-    }
-
-    public Date getActualDate() {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date today = Calendar.getInstance().getTime();
-        return today;
-    }
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        month=month+1;
-        String date = formatDateOnPicker(dayOfMonth,month,year);
-        txtStartDate.setText(date);
     }
 
 
